@@ -5,14 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GameOfLife"
         mc:Ignorable="d"
-        Title="MainWindow" Height="300" Width="800" Background="#FFB9A9A9">
-    <Grid Margin="0,0,-8,-4">
-        <Button x:Name="CreateButton" Content="Create" HorizontalAlignment="Left" Margin="565,78,0,167" Width="105" Click="Button_Click"/>
-        <WrapPanel x:Name="map" HorizontalAlignment="Left" Height="200" Margin="0,0,0,0" VerticalAlignment="Top" Width="200"/>
-        <Button x:Name="button1" HorizontalAlignment="Left" Margin="625,160,0,0" VerticalAlignment="Top" Width="75">
-            <Button x:Name="StartButton" Content="Start" Width="75" Click="StartButton_Click"/>
-        </Button>
-        <Button x:Name="ClearButton" Content="Clear" HorizontalAlignment="Left" Margin="585,50,0,0" VerticalAlignment="Top" Width="75" Click="ClearButton_Click"/>
-
+        Title="MainWindow" Height="300" Width="500" Background="#FFB9A9A9">
+    <Grid>
+        <WrapPanel x:Name="map" HorizontalAlignment="Left" Height="200" Margin="10" VerticalAlignment="Top" Width="200" />
+        <Button Content="Clear" HorizontalAlignment="Left" Margin="250,100,0,0" VerticalAlignment="Top" Width="100"
+                Click="ClearButton_Click" />
+        <Button Content="Create" HorizontalAlignment="Left" Margin="250,20,0,0" VerticalAlignment="Top" Width="100"
+                Click="Button_Click" />
+        <Button HorizontalAlignment="Left" Margin="250,60,0,0" VerticalAlignment="Top" Width="100" Content="Start"
+                Click="StartButton_Click" />
     </Grid>
 </Window>
