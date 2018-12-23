@@ -1,43 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Threading;
 
 namespace GameOfLife
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
-    /// </summary>
+    /// </summary>  
     public partial class MainWindow : Window
     {
+        private LifeData _lifeData;
         public MainWindow()
         {
             InitializeComponent();
+            _lifeData = new LifeData();
+
         }
+
         static Button[,] dots = new Button[20, 20];
         static Brush[,] dotsNext = new Brush[20, 20];
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            const int width = 200;
-            const int height = 200;
-            for (int i = 0; i < height/10; i++)
+            for (int i = 0; i < 20; i++)
             {
-                for (int j = 0; j < width/10; j++)
+                for (int j = 0; j < 20; j++)
                 {
                     Button buttons = new Button();
                     buttons.Width = 10;
-                    buttons.Uid =  $"{j.ToString()},{i.ToString()}";
+                    buttons.Uid =  $"{j},{i}";
                     buttons.Height = 10;
                     buttons.Click += buttons_Click;
                     buttons.Background = Brushes.White;
@@ -49,14 +40,22 @@ namespace GameOfLife
         private void buttons_Click(object sender, RoutedEventArgs e)
         {
             Button thisButton = (Button)sender;
+            //TODO: remove
             thisButton.Background = thisButton.Background == Brushes.Black ? Brushes.White : Brushes.Black;
             int posX = int.Parse(thisButton.Uid.Split(',').First());
             int posY = int.Parse(thisButton.Uid.Split(',').Last());
             dots[posY, posX].Background = thisButton.Background;
+
+            _lifeData.ReverseState(posX, posY);
+            _lifeData.PaintButtons(dots);
         }
 
         private void StartButton_Click(object sender, RoutedEventArgs e)
         {
+            _lifeData.MakeTurn();
+            _lifeData.PaintButtons(dots);
+
+            //TODO: remove
             for (int i = 0; i < 20; i++)
             {
                 for (int j = 0; j < 20; j++)
