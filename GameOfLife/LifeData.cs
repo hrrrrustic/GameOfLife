@@ -7,19 +7,21 @@ namespace GameOfLife
 {
     public class LifeData
     {
-        private bool[,] States = new bool[20, 20];
-        private bool[,] NextStates = new bool[20, 20];
-        private bool[] Values = new bool[400];
-        public LifeData()
+        private bool[,] _states;
+        private bool[,] _nextStates;
+        private int _field;
+        public LifeData(int field)
         {
-                
+            _states = new bool[field, field];
+            _nextStates = new bool[field, field];
+            _field = field;
         }
 
         public void MakeTurn()
         {
-            for (int i = 0; i < 20; i++)
+            for (int i = 0; i < _field; i++)
             {
-                for (int j = 0; j < 20; j++)
+                for (int j = 0; j < _field; j++)
                 {
                     int aliveCount = GetInfo(i, j);
                     GetNextPositions(i, j, aliveCount);
@@ -30,14 +32,12 @@ namespace GameOfLife
 
         public void PaintButtons(Button[,] buttons)
         {
-            int k = 0;
-            for (int i = 0; i < 20; i++)
+            for (int i = 0; i < _field; i++)
             {
-                for (int j = 0; j < 20; j++)
+                for (int j = 0; j < _field; j++)
                 {
-                    States[i, j] = NextStates[i, j];
-                    Values[k++] = States[i, j];
-                    buttons[i, j].Background = States[i, j] == true ? Brushes.Black : Brushes.White;
+                    _states[i, j] = _nextStates[i, j];
+                    buttons[i, j].Background = _states[i, j] == true ? Brushes.Black : Brushes.White;
                 }
             }
         }
@@ -45,10 +45,12 @@ namespace GameOfLife
         public void ReverseState(Button thisButton, int y, int x)
         {
             thisButton.Background = thisButton.Background == Brushes.Black ? Brushes.White : Brushes.Black;
-            States[y, x] = thisButton.Background == Brushes.Black ? true : false;
+            _states[y, x] = thisButton.Background == Brushes.Black ? true : false;
         }
         private int GetInfo(int y, int x)
         {
+            int xBorder = _field;
+            int yBorder = _field;
             int aliveCount = 0;
             for (int i = y - 1; i < y + 2; i++)
             {
@@ -56,9 +58,9 @@ namespace GameOfLife
                 {
                     if (i == y && j == x)
                         continue;
-                    int posXCopy = j == -1 ? 19 : j == 20 ? 0 : j;
-                    int posYCopy = i == -1 ? 19 : i == 20 ? 0 : i;
-                    if (States[posYCopy, posXCopy])
+                    int posXCopy = j == -1 ? xBorder - 1 : j == xBorder ? 0 : j;
+                    int posYCopy = i == -1 ? yBorder - 1 : i == yBorder ? 0 : i;
+                    if (_states[posYCopy, posXCopy])
                         aliveCount++;
                 }
             }
@@ -66,30 +68,30 @@ namespace GameOfLife
         }
         private void GetNextPositions(int y, int x, int aliveCount)
         {
-            if (States[y, x])
+            if (_states[y, x])
             {
                 if (aliveCount > 3 || aliveCount < 2)
-                    NextStates[y, x] = false;
+                    _nextStates[y, x] = false;
                 else
-                    NextStates[y, x] = true;
+                    _nextStates[y, x] = true;
             }
             else
             {
                 if (aliveCount == 3)
-                    NextStates[y, x] = true;
+                    _nextStates[y, x] = true;
                 else
-                    NextStates[y, x] = false;
+                    _nextStates[y, x] = false;
             }
         }
         public void SaveInBMP()
         {
-            int height = 20; //Пока что фиксированное значение
-            int width = 20; //Тоже самое
+            int height = _field; 
+            int width = _field; 
             int stride = width * 4;
             byte[] bits = new byte[height * stride];
             for (int i = 0; i < bits.Length - 3; i += 4) 
             {
-                if (States[(i / 4) / 20, (i / 4) % 20]) 
+                if (_states[(i / 4) / _field , (i / 4) % _field]) 
                 {
                     bits[i] = 0;
                     bits[i + 1] = 0;
