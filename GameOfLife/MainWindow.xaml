@@ -8,11 +8,12 @@
         Title="MainWindow" Height="300" Width="500" Background="#FFB9A9A9">
     <Grid>
         <WrapPanel x:Name="map" HorizontalAlignment="Left" Height="200" Margin="10" VerticalAlignment="Top" Width="200" />
-        <Button Content="Clear" HorizontalAlignment="Left" Margin="250,100,0,0" VerticalAlignment="Top" Width="100"
-                Click="ClearButton_Click" />
-        <Button Content="Create" HorizontalAlignment="Left" Margin="250,20,0,0" VerticalAlignment="Top" Width="100"
-                Click="Button_Click" />
-        <Button HorizontalAlignment="Left" Margin="250,60,0,0" VerticalAlignment="Top" Width="100" Content="Start"
+        <Button x:Name="Save" Content="Save" HorizontalAlignment="Left" Margin="250,100,0,0" VerticalAlignment="Top" Width="100"
+                Click="SaveButton_Click" />
+        <Button x:Name="Create" Content="Create" HorizontalAlignment="Left" Margin="250,20,0,0" VerticalAlignment="Top" Width="100"
+                Click="CreateButton_Click" />
+        <Button x:Name="Start" HorizontalAlignment="Left" Margin="250,60,0,0" VerticalAlignment="Top" Width="100" Content="Start"
                 Click="StartButton_Click" />
+        <TextBox x:Name="Counter" HorizontalAlignment="Left" Height="23" Margin="250,147,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="120"/>
     </Grid>
 </Window>
