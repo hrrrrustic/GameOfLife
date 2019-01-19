@@ -4,6 +4,10 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.IO;
+using System.ComponentModel;
+using System;
+using System.Windows.Threading;
+using System.Threading;
 
 namespace GameOfLife
 {
@@ -44,21 +48,36 @@ namespace GameOfLife
         }
         private void buttons_Click(object sender, RoutedEventArgs e)
         {
-                Button thisButton = (Button)sender;
-                int posY = int.Parse(thisButton.Uid.Split(',').First());
-                int posX = int.Parse(thisButton.Uid.Split(',').Last());
-                _lifeData.ReverseState(thisButton, posY, posX);
+            Button thisButton = (Button)sender;
+            int posY = int.Parse(thisButton.Uid.Split(',').First());
+            int posX = int.Parse(thisButton.Uid.Split(',').Last());
+            _lifeData.ReverseState(thisButton, posY, posX);
         }
 
         private void StartButton_Click(object sender, RoutedEventArgs e)
         {
+            while (_lifeData.isSomeoneAlive)
+            {
                 _lifeData.MakeTurn();
                 _lifeData.PaintButtons(_dots);
-
+                map.Refresh();
+                Thread.Sleep(15);
+            }
         }
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
             _lifeData.SaveInBMP();           
+        }
+    }
+    public static class ExtensionMethods
+    {
+        private static Action EmptyDelegate = delegate () { };
+
+
+        public static void Refresh(this UIElement uiElement)
+
+        {
+            uiElement.Dispatcher.Invoke(DispatcherPriority.Render, EmptyDelegate);
         }
     }
 }

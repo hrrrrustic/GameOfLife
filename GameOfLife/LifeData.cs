@@ -2,6 +2,8 @@
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.IO;
+using System.ComponentModel;
+using System.Threading;
 
 namespace GameOfLife
 {
@@ -9,16 +11,19 @@ namespace GameOfLife
     {
         private bool[,] _states;
         private bool[,] _nextStates;
-        private int _field;
+        readonly int _field;
+        public bool isSomeoneAlive;
         public LifeData(int field)
         {
             _states = new bool[field, field];
             _nextStates = new bool[field, field];
             _field = field;
+            isSomeoneAlive = true;
         }
 
         public void MakeTurn()
         {
+            isSomeoneAlive = false;
             for (int i = 0; i < _field; i++)
             {
                 for (int j = 0; j < _field; j++)
@@ -27,7 +32,6 @@ namespace GameOfLife
                     GetNextPositions(i, j, aliveCount);
                 }
             }
-            
         }
 
         public void PaintButtons(Button[,] buttons)
@@ -73,12 +77,18 @@ namespace GameOfLife
                 if (aliveCount > 3 || aliveCount < 2)
                     _nextStates[y, x] = false;
                 else
+                {
                     _nextStates[y, x] = true;
+                    isSomeoneAlive = true;
+                }
             }
             else
             {
                 if (aliveCount == 3)
+                {
                     _nextStates[y, x] = true;
+                    isSomeoneAlive = true;
+                }
                 else
                     _nextStates[y, x] = false;
             }
