@@ -56,6 +56,8 @@ namespace GameOfLife
 
         private void StartButton_Click(object sender, RoutedEventArgs e)
         {
+            //Если после смерти всех добавить новых и нажать старт - работать это не будет
+            //TODO: добавь проверку, что поле изменяется за шаг
             while (_lifeData.isSomeoneAlive)
             {
                 _lifeData.MakeTurn();
