@@ -2,6 +2,7 @@
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.IO;
+//TODO: не юзабельне юзинги
 using System.ComponentModel;
 using System.Threading;
 
@@ -11,13 +12,16 @@ namespace GameOfLife
     {
         private bool[,] _states;
         private bool[,] _nextStates;
+        //TODO: Пропустил модификатор доступа
         readonly int _field;
+        //TODO: Чек код-стайл
         public bool isSomeoneAlive;
         public LifeData(int field)
         {
             _states = new bool[field, field];
             _nextStates = new bool[field, field];
             _field = field;
+            //TODO: А ты уверен, что это правда?
             isSomeoneAlive = true;
         }
 
@@ -32,6 +36,7 @@ namespace GameOfLife
                     GetNextPositions(i, j, aliveCount);
                 }
             }
+            //TODO: Возможно, тут должно быть _state = _nextState
         }
 
         public void PaintButtons(Button[,] buttons)
@@ -40,17 +45,19 @@ namespace GameOfLife
             {
                 for (int j = 0; j < _field; j++)
                 {
+                    //TODO: Очень плохо
                     _states[i, j] = _nextStates[i, j];
-                    buttons[i, j].Background = _states[i, j] == true ? Brushes.Black : Brushes.White;
+                    buttons[i, j].Background = _states[i, j] ? Brushes.Black : Brushes.White;
                 }
             }
         }
 
         public void ReverseState(Button thisButton, int y, int x)
         {
-            thisButton.Background = thisButton.Background == Brushes.Black ? Brushes.White : Brushes.Black;
-            _states[y, x] = thisButton.Background == Brushes.Black ? true : false;
+            _states[y, x] = !_states[y, x];
+            thisButton.Background = _states[y, x] ? Brushes.Black : Brushes.White;
         }
+        //TODO: Почему не GetAliveAroundCount? Название не оч информативно, ты почти всегда получаешь при Get инфо
         private int GetInfo(int y, int x)
         {
             int xBorder = _field;
@@ -62,6 +69,10 @@ namespace GameOfLife
                 {
                     if (i == y && j == x)
                         continue;
+
+                    //TODO: стоит написать адекватный метод, получения значения
+                    //который будет возвращать false если значение вне границ или false
+                    //и true если все ок
                     int posXCopy = j == -1 ? xBorder - 1 : j == xBorder ? 0 : j;
                     int posYCopy = i == -1 ? yBorder - 1 : i == yBorder ? 0 : i;
                     if (_states[posYCopy, posXCopy])
@@ -70,6 +81,7 @@ namespace GameOfLife
             }
             return aliveCount;
         }
+        //TODO: Get (void) ))0)
         private void GetNextPositions(int y, int x, int aliveCount)
         {
             if (_states[y, x])
