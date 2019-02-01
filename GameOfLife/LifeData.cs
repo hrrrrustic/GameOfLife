@@ -2,9 +2,6 @@
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.IO;
-//TODO: не юзабельне юзинги
-using System.ComponentModel;
-using System.Threading;
 
 namespace GameOfLife
 {
@@ -12,41 +9,35 @@ namespace GameOfLife
     {
         private bool[,] _states;
         private bool[,] _nextStates;
-        //TODO: Пропустил модификатор доступа
-        readonly int _field;
-        //TODO: Чек код-стайл
-        public bool isSomeoneAlive;
+        internal readonly int Field;
+        public int LiveCount  = 0;
         public LifeData(int field)
         {
             _states = new bool[field, field];
             _nextStates = new bool[field, field];
-            _field = field;
-            //TODO: А ты уверен, что это правда?
-            isSomeoneAlive = true;
+            Field = field;
         }
 
         public void MakeTurn()
         {
-            isSomeoneAlive = false;
-            for (int i = 0; i < _field; i++)
+            for (int i = 0; i < Field; i++)
             {
-                for (int j = 0; j < _field; j++)
+                for (int j = 0; j < Field; j++)
                 {
-                    int aliveCount = GetInfo(i, j);
-                    GetNextPositions(i, j, aliveCount);
+                    int aliveCount = GetAliveNeighborsCount(i, j);
+                    ShapeNextPositions(i, j, aliveCount);
                 }
             }
-            //TODO: Возможно, тут должно быть _state = _nextState
+            _states = (bool[,])_nextStates.Clone();
+            
         }
 
         public void PaintButtons(Button[,] buttons)
         {
-            for (int i = 0; i < _field; i++)
+            for (int i = 0; i < Field; i++)
             {
-                for (int j = 0; j < _field; j++)
+                for (int j = 0; j < Field; j++)
                 {
-                    //TODO: Очень плохо
-                    _states[i, j] = _nextStates[i, j];
                     buttons[i, j].Background = _states[i, j] ? Brushes.Black : Brushes.White;
                 }
             }
@@ -55,13 +46,22 @@ namespace GameOfLife
         public void ReverseState(Button thisButton, int y, int x)
         {
             _states[y, x] = !_states[y, x];
-            thisButton.Background = _states[y, x] ? Brushes.Black : Brushes.White;
+            if(_states[y,x])
+            {
+                thisButton.Background = Brushes.Black;
+                LiveCount++;
+            }
+            else
+            {
+                thisButton.Background = Brushes.White;
+                LiveCount--;
+            }
         }
-        //TODO: Почему не GetAliveAroundCount? Название не оч информативно, ты почти всегда получаешь при Get инфо
-        private int GetInfo(int y, int x)
+
+        private int GetAliveNeighborsCount(int y, int x)
         {
-            int xBorder = _field;
-            int yBorder = _field;
+            int xBorder = Field;
+            int yBorder = Field;
             int aliveCount = 0;
             for (int i = y - 1; i < y + 2; i++)
             {
@@ -69,10 +69,6 @@ namespace GameOfLife
                 {
                     if (i == y && j == x)
                         continue;
-
-                    //TODO: стоит написать адекватный метод, получения значения
-                    //который будет возвращать false если значение вне границ или false
-                    //и true если все ок
                     int posXCopy = j == -1 ? xBorder - 1 : j == xBorder ? 0 : j;
                     int posYCopy = i == -1 ? yBorder - 1 : i == yBorder ? 0 : i;
                     if (_states[posYCopy, posXCopy])
@@ -81,17 +77,18 @@ namespace GameOfLife
             }
             return aliveCount;
         }
-        //TODO: Get (void) ))0)
-        private void GetNextPositions(int y, int x, int aliveCount)
+        private void ShapeNextPositions(int y, int x, int aliveCount)
         {
             if (_states[y, x])
             {
                 if (aliveCount > 3 || aliveCount < 2)
+                {
                     _nextStates[y, x] = false;
+                    LiveCount--;
+                }
                 else
                 {
                     _nextStates[y, x] = true;
-                    isSomeoneAlive = true;
                 }
             }
             else
@@ -99,7 +96,7 @@ namespace GameOfLife
                 if (aliveCount == 3)
                 {
                     _nextStates[y, x] = true;
-                    isSomeoneAlive = true;
+                    LiveCount++;
                 }
                 else
                     _nextStates[y, x] = false;
@@ -107,13 +104,13 @@ namespace GameOfLife
         }
         public void SaveInBMP()
         {
-            int height = _field; 
-            int width = _field; 
+            int height = Field; 
+            int width = Field; 
             int stride = width * 4;
             byte[] bits = new byte[height * stride];
             for (int i = 0; i < bits.Length - 3; i += 4) 
             {
-                if (_states[(i / 4) / _field , (i / 4) % _field]) 
+                if (_states[(i / 4) /Field , (i / 4) % Field]) 
                 {
                     bits[i] = 0;
                     bits[i + 1] = 0;

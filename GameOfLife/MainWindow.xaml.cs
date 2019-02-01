@@ -2,9 +2,6 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.IO;
-using System.ComponentModel;
 using System;
 using System.Windows.Threading;
 using System.Threading;
@@ -56,15 +53,14 @@ namespace GameOfLife
 
         private void StartButton_Click(object sender, RoutedEventArgs e)
         {
-            //Если после смерти всех добавить новых и нажать старт - работать это не будет
-            //TODO: добавь проверку, что поле изменяется за шаг
-            while (_lifeData.isSomeoneAlive)
+            do
             {
                 _lifeData.MakeTurn();
                 _lifeData.PaintButtons(_dots);
                 map.Refresh();
                 Thread.Sleep(15);
             }
+            while (_lifeData.LiveCount != 0);
         }
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
