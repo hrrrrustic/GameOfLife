@@ -2,8 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using System;
-using System.Windows.Threading;
+using System.ComponentModel;
 using System.Threading;
 
 namespace GameOfLife
@@ -32,10 +31,7 @@ namespace GameOfLife
             {
                 for (int j = 0; j < field; j++)
                 {
-                    Button buttons = new Button();
-                    buttons.Width = 10;
-                    buttons.Height = 10;
-                    buttons.Uid = $"{i},{j}";
+                    Button buttons = new Button {Width = 10, Height = 10, Uid = $"{i},{j}"};
                     buttons.Click += buttons_Click;
                     buttons.Background = Brushes.White;
                     _dots[i, j] = buttons;
@@ -53,29 +49,24 @@ namespace GameOfLife
 
         private void StartButton_Click(object sender, RoutedEventArgs e)
         {
+            BackgroundWorker worker = new BackgroundWorker();
+            worker.DoWork += Execute;
+            worker.RunWorkerAsync();
+        }
+
+        private void Execute(object sender, DoWorkEventArgs e)
+        {
             do
             {
                 _lifeData.MakeTurn();
-                _lifeData.PaintButtons(_dots);
-                map.Refresh();
-                Thread.Sleep(15);
-            }
-            while (_lifeData.LiveCount != 0);
+                Application.Current.Dispatcher.Invoke(() => { _lifeData.PaintButtons(_dots); });
+                Thread.Sleep(100);
+            } while (_lifeData.LiveCount != 0);
         }
+
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
-            _lifeData.SaveInBMP();           
-        }
-    }
-    public static class ExtensionMethods
-    {
-        private static Action EmptyDelegate = delegate () { };
-
-
-        public static void Refresh(this UIElement uiElement)
-
-        {
-            uiElement.Dispatcher.Invoke(DispatcherPriority.Render, EmptyDelegate);
+            _lifeData.SaveInBmp();           
         }
     }
 }

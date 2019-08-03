@@ -8,21 +8,21 @@ namespace GameOfLife
     public class LifeData
     {
         private bool[,] _states;
-        private bool[,] _nextStates;
-        internal readonly int Field;
-        public int LiveCount  = 0;
+        private readonly bool[,] _nextStates;
+        private readonly int _field;
+        public int LiveCount;
         public LifeData(int field)
         {
             _states = new bool[field, field];
             _nextStates = new bool[field, field];
-            Field = field;
+            _field = field;
         }
 
         public void MakeTurn()
         {
-            for (int i = 0; i < Field; i++)
+            for (int i = 0; i < _field; i++)
             {
-                for (int j = 0; j < Field; j++)
+                for (int j = 0; j < _field; j++)
                 {
                     int aliveCount = GetAliveNeighborsCount(i, j);
                     ShapeNextPositions(i, j, aliveCount);
@@ -34,9 +34,9 @@ namespace GameOfLife
 
         public void PaintButtons(Button[,] buttons)
         {
-            for (int i = 0; i < Field; i++)
+            for (int i = 0; i < _field; i++)
             {
-                for (int j = 0; j < Field; j++)
+                for (int j = 0; j < _field; j++)
                 {
                     buttons[i, j].Background = _states[i, j] ? Brushes.Black : Brushes.White;
                 }
@@ -60,8 +60,8 @@ namespace GameOfLife
 
         private int GetAliveNeighborsCount(int y, int x)
         {
-            int xBorder = Field;
-            int yBorder = Field;
+            int xBorder = _field;
+            int yBorder = _field;
             int aliveCount = 0;
             for (int i = y - 1; i < y + 2; i++)
             {
@@ -102,15 +102,15 @@ namespace GameOfLife
                     _nextStates[y, x] = false;
             }
         }
-        public void SaveInBMP()
+        public void SaveInBmp()
         {
-            int height = Field; 
-            int width = Field; 
+            int height = _field; 
+            int width = _field; 
             int stride = width * 4;
             byte[] bits = new byte[height * stride];
             for (int i = 0; i < bits.Length - 3; i += 4) 
             {
-                if (_states[(i / 4) /Field , (i / 4) % Field]) 
+                if (_states[(i / 4) /_field , (i / 4) % _field]) 
                 {
                     bits[i] = 0;
                     bits[i + 1] = 0;
@@ -125,13 +125,12 @@ namespace GameOfLife
                 bits[i + 3] = 255;
             }
             PixelFormat format =  PixelFormats.Pbgra32;
-            int bytesPerPixel = (format.BitsPerPixel + 7) / 8;
             BitmapSource bitmap = BitmapSource.Create(width, height, 96, 96, format, null, bits, stride);
             BmpBitmapEncoder encoder = new BmpBitmapEncoder();
             encoder.Frames.Add(BitmapFrame.Create(bitmap));
-            using (var filestream = new FileStream("output.bmp", FileMode.Create))
+            using (var fileStream = new FileStream("output.bmp", FileMode.Create))
             {
-                encoder.Save(filestream);
+                encoder.Save(fileStream);
             }
         }
     }
