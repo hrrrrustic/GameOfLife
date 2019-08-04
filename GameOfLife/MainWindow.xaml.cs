@@ -59,7 +59,11 @@ namespace GameOfLife
             do
             {
                 _lifeData.MakeTurn();
-                Application.Current.Dispatcher.Invoke(() => { _lifeData.PaintButtons(_dots); });
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                Counter.Text = (int.Parse(Counter.Text) + 1).ToString();
+                _lifeData.PaintButtons(_dots);
+                });
                 Thread.Sleep(100);
             } while (_lifeData.LiveCount != 0);
         }
